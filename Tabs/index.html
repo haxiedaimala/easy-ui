@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab选项卡</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            border-radius: 4px;
+            box-shadow: 0 0 4px 0 rgba(0, 0, 0, .3);
+            padding: 16px;
+        }
+        
+        .tabs .tab-header {
+            display: flex;
+            font-size: 14px;
+            color: #303030;
+            /* line-height: 30px; */
+            line-height: 2.5;
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .tab-header .tab-item {
+            margin-right: 30px;
+            margin-bottom: -2px;
+            cursor: pointer;
+        }
+        
+        .tab-header .tab-item.active {
+            color: #409eff;
+            border-bottom: 2px solid #409eff;
+        }
+        
+        .tab-content .tab-panel {
+            padding: 16px 0;
+            font-size: 16px;
+            display: none;
+        }
+        
+        .tab-content .tab-panel.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Tab选项卡</h2>
+        <div class="tabs">
+            <div class="tab-header">
+                <span class="tab-item active">用户管理</span>
+                <span class="tab-item">配置管理</span>
+                <span class="tab-item">角色管理</span>
+                <span class="tab-item">定时任务补偿</span>
+            </div>
+            <div class="tab-content">
+                <div class="tab-panel active">用户管理</div>
+                <div class="tab-panel">配置管理</div>
+                <div class="tab-panel">角色管理</div>
+                <div class="tab-panel">定时任务补偿</div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // 定义一个获取元素标签的函数，重复写太长太麻烦啦
+        //一般元素节点用$命名，类数组对象用$$命名
+
+        const $ = s => document.querySelector(s)
+        const $$ = s => document.querySelectorAll(s)
+
+        // 得到的tab-item的集合，是类数组对象
+        const $$tabItmes = $$('.tab-header .tab-item')
+            // 得到的tab-panel的集合，是类数组对象
+        const $$tabPanels = $$('.tab-content .tab-panel')
+
+        //遍历tab-item的集合，得到每一个tab-item
+        $$tabItmes.forEach($tab => {
+            $tab.onclick = function() {
+                // 先让所有tab-item去除active的class
+                $$tabItmes.forEach($tab => $tab.classList.remove('active'))
+                    // 再给当前的被点击的tab-itme添加active的class
+                this.classList.add('active')
+                    //获取被点击的tab-item的索引，便于对应索引tab-content的显示
+                let index = [...$$tabItmes].indexOf(this)
+                    // 先让所有tab-panel去除active的class
+                $$tabPanels.forEach($panel => $panel.classList.remove('active'))
+                $$tabPanels[index].classList.add('active')
+            }
+        })
+    </script>
+</body>
+
+</html>
