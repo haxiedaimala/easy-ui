@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tooltip</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 10px 16px;
+            border-radius: 4px;
+            box-shadow: 0 0 4px 0 rgba(0, 0, 0, .3);
+        }
+        
+        .button {
+            position: relative;
+            padding: 10px 20px;
+            margin-right: 16px;
+            font-size: 14px;
+            color: #303030;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            color: skyblue;
+            border-color: skyblue;
+        }
+        
+        .tooltip {
+            position: absolute;
+            z-index: 888;
+            padding: 4px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+            background-color: #000;
+            color: #fff;
+            display: none;
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border: 5px solid transparent;
+        }
+        
+        .tooltip.top {
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .tooltip.top::after {
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-top-color: #303030;
+        }
+        
+        .tooltip.bottom {
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .tooltip.bottom::after {
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-color: #303030;
+        }
+        
+        .tooltip.right {
+            left: calc(100% + 10px);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .tooltip.right::after {
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-right-color: #000;
+        }
+        
+        .tooltip.left {
+            right: calc(100% + 10px);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .tooltip.left::after {
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-left-color: #303030;
+        }
+        
+        .tooltip.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Tooltip组件信息</h2>
+        <div class="btn-group">
+            <button class="button" data-name="tooltip" data-align="top" data-text="我是上的内容">上</button>
+            <button class="button" data-name="tooltip" data-align="right" data-text="我是右的内容">右</button>
+            <button class="button" data-name="tooltip" data-align="bottom" data-text="我是下的内容">下</button>
+            <button class="button" data-name="tooltip" data-align="left" data-text="我是左的内容">左</button>
+
+        </div>
+    </div>
+    <div class="container">
+        <h2>Tooltip组件信息</h2>
+        <div class="btn-group">
+            <button class="button" data-name="tooltip" data-align="top" data-text="我是上的内容">上</button>
+            <button class="button" data-name="tooltip" data-align="right" data-text="我是右的内容">右</button>
+            <button class="button" data-name="tooltip" data-align="bottom" data-text="我是下的内容">下</button>
+            <button class="button" data-name="tooltip" data-align="left" data-text="我是左的内容">左</button>
+
+        </div>
+    </div>
+
+    <script>
+        class Tooltip {
+            constructor($root) {
+                this.$root = $root
+                    // 记录对象组件产生
+                this.$root.tooltips = this
+                this.align = $root.dataset.align
+                this.text = $root.dataset.text
+
+
+                this.render()
+                this.setRoot()
+                this.show()
+            }
+            render() {
+                // 创建一个组件元素
+                let $tooltips = document.createElement('div')
+                this.$tooltips = $tooltips
+                $tooltips.classList.add('tooltip')
+                $tooltips.classList.add(this.align)
+                $tooltips.innerText = this.text
+                    // 将组件元素追加到传送来的节点上
+                this.$root.appendChild($tooltips)
+            }
+            setRoot() {
+                // 这里报错，很有可能经过onmouseenter,onmouseleave事件之后，调用事件时this的指向发生了变化
+                // 因此需要bind（this）使其this指向为当前创建的对象
+                this.$root.showTooltip = this.show.bind(this)
+                this.$root.hideTooltip = this.hide.bind(this)
+            }
+            show() {
+                this.$tooltips.classList.add('show')
+            }
+            hide() {
+
+                this.$tooltips.classList.remove('show')
+            }
+        }
+
+        document.querySelectorAll('[data-name="tooltip"]').forEach($node => {
+            $node.onmouseenter = function() {
+                // 如果组件存在了，就显示出来，如果不存在就创建对象
+                if ($node.tooltips) {
+                    $node.showTooltip()
+                } else {
+                    new Tooltip($node)
+
+                }
+            }
+            $node.onmouseleave = function() {
+                $node.hideTooltip()
+            }
+        })
+    </script>
+</body>
+
+</html>
